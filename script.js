@@ -1,98 +1,106 @@
-// Mobile nav toggle
-const toggle = document.querySelector('.nav-toggle');
-const menu = document.querySelector('.nav-menu');
+// ====================================
+// MODERN PORTFOLIO - JAVASCRIPT
+// ====================================
 
-if (toggle && menu) {
-  toggle.addEventListener('click', () => {
-    const isOpen = menu.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
+// Mobile Navigation Toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navList = document.querySelector('.nav-list');
+
+if (navToggle && navList) {
+  navToggle.addEventListener('click', () => {
+    const isOpen = navList.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
   });
 
   // Close menu when clicking a link
-  menu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      menu.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
+  navList.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
     });
   });
 
-  // Close menu on outside click
+  // Close menu when clicking outside
   document.addEventListener('click', (e) => {
-    if (!menu.classList.contains('is-open')) return;
-    const within = menu.contains(e.target) || toggle.contains(e.target);
-    if (!within) {
-      menu.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
+    if (!navList.contains(e.target) && !navToggle.contains(e.target)) {
+      navList.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
     }
   });
 }
 
-// Smooth anchor scrolling (fixes “some links don’t jump”)
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', (e) => {
-    const hash = link.getAttribute('href');
-    if (!hash || hash === '#') return;
+// Smooth Scroll for Anchor Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
 
-    const target = document.querySelector(hash);
-    if (!target) return;
-
-    e.preventDefault();
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    history.pushState(null, '', hash);
+    const target = document.querySelector(href);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      history.pushState(null, '', href);
+    }
   });
 });
 
-// Profile photo fallback (show placeholder if image missing)
-const photoWrap = document.querySelector('.profile-photo');
-if (photoWrap) {
-  const img = photoWrap.querySelector('img');
-  const fallback = photoWrap.querySelector('.profile-fallback');
+// Profile Image Fallback
+const profileImage = document.querySelector('.profile-image img');
+const profilePlaceholder = document.querySelector('.profile-placeholder');
 
-  if (img && fallback) {
-    const show = () => { fallback.style.display = 'flex'; };
-    const hide = () => { fallback.style.display = 'none'; };
+if (profileImage && profilePlaceholder) {
+  const showPlaceholder = () => {
+    profilePlaceholder.style.display = 'flex';
+  };
 
-    show();
-    img.addEventListener('load', hide);
-    img.addEventListener('error', show);
+  const hidePlaceholder = () => {
+    profilePlaceholder.style.display = 'none';
+  };
 
-    if (img.complete && img.naturalWidth > 0) hide();
+  // Show placeholder initially
+  showPlaceholder();
+
+  profileImage.addEventListener('load', () => {
+    if (profileImage.naturalWidth > 0) {
+      hidePlaceholder();
+    }
+  });
+
+  profileImage.addEventListener('error', showPlaceholder);
+
+  // Check if image is already loaded
+  if (profileImage.complete && profileImage.naturalWidth > 0) {
+    hidePlaceholder();
   }
 }
 
-// Certificate modal viewer
-const modal = document.getElementById('docModal');
-const docTitle = document.getElementById('docTitle');
-const docBody = document.getElementById('docBody');
+// Certificate Modal
+const modal = document.getElementById('certModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const certButtons = document.querySelectorAll('.cert-btn');
+const closeButtons = document.querySelectorAll('[data-close]');
 
-function openModal(title, file) {
-  if (!modal || !docTitle || !docBody) return;
+function openModal(title) {
+  if (!modal) return;
 
-  docTitle.textContent = title || 'Document';
-  docBody.innerHTML = '';
-
-  const safeFile = (file || '').trim();
-
-  if (!safeFile) {
-    docBody.innerHTML = `
-      <div style="padding:16px; color:#334155; line-height:1.7; font-weight:650;">
-        This document is available upon request. To show it publicly, upload a redacted PDF/image to
-        <code>/assets/certificates/</code> and set the card’s <code>data-file</code>.
-      </div>`;
-  } else if (safeFile.toLowerCase().endsWith('.pdf')) {
-    const iframe = document.createElement('iframe');
-    iframe.src = safeFile;
-    iframe.title = title || 'Document';
-    docBody.appendChild(iframe);
-  } else {
-    const wrap = document.createElement('div');
-    wrap.className = 'img-wrap';
-    const img = document.createElement('img');
-    img.src = safeFile;
-    img.alt = title || 'Document';
-    wrap.appendChild(img);
-    docBody.appendChild(wrap);
-  }
+  modalTitle.textContent = title || 'Certification';
+  modalBody.innerHTML = `
+    <p style="color: var(--gray-600); line-height: 1.7;">
+      This certification is available upon request. To verify credentials or request 
+      documentation, please contact me directly via email or phone.
+    </p>
+    <div style="margin-top: 24px; padding: 20px; background: var(--gray-50); border-radius: var(--radius-md); border: 1px solid var(--gray-200);">
+      <p style="font-weight: 700; color: var(--gray-900); margin-bottom: 8px;">📧 Email:</p>
+      <p style="color: var(--gray-600);">rohim6360ba.en@gmail.com</p>
+      
+      <p style="font-weight: 700; color: var(--gray-900); margin-top: 16px; margin-bottom: 8px;">📞 Phone:</p>
+      <p style="color: var(--gray-600);">+95 942 112 8678</p>
+    </div>
+  `;
 
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -102,36 +110,68 @@ function closeModal() {
   if (!modal) return;
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  if (docBody) docBody.innerHTML = '';
 }
 
-document.querySelectorAll('.cert-btn').forEach(btn => {
+certButtons.forEach(btn => {
   btn.addEventListener('click', () => {
-    openModal(btn.getAttribute('data-title'), btn.getAttribute('data-file'));
+    openModal(btn.getAttribute('data-title'));
   });
 });
 
-document.querySelectorAll('[data-close-modal]').forEach(el => {
-  el.addEventListener('click', closeModal);
+closeButtons.forEach(btn => {
+  btn.addEventListener('click', closeModal);
 });
 
+// Close modal on Escape key
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape' && modal && modal.getAttribute('aria-hidden') === 'false') {
+    closeModal();
+  }
 });
 
-// Reveal-on-scroll
-const revealEls = document.querySelectorAll('.reveal');
-if ('IntersectionObserver' in window) {
-  const io = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    }
-  }, { threshold: 0.12 });
+// Scroll Animations (Intersection Observer)
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
 
-  revealEls.forEach(el => io.observe(el));
-} else {
-  revealEls.forEach(el => el.classList.add('is-visible'));
-}
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+// Animate sections on scroll
+const animateOnScroll = document.querySelectorAll('.service-card, .about-card, .timeline-item, .cert-card, .skill-category');
+
+animateOnScroll.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+
+// Header Scroll Effect
+let lastScroll = 0;
+const header = document.querySelector('.header');
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset;
+
+  if (currentScroll > 100) {
+    header.style.boxShadow = 'var(--shadow-md)';
+  } else {
+    header.style.boxShadow = 'none';
+  }
+
+  lastScroll = currentScroll;
+});
+
+// Console Message
+console.log('%c👋 Hello! ', 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; font-size: 16px; font-weight: bold; border-radius: 8px;');
+console.log('%cLooking to hire a professional interpreter? Let\'s connect!', 'color: #2563EB; font-size: 14px; font-weight: 600;');
+console.log('%c📧 rohim6360ba.en@gmail.com', 'color: #6B7280; font-size: 13px;');
