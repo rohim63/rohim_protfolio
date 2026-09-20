@@ -158,3 +158,16 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 onScroll();
+
+// ---------- Profile card 3D tilt (desktop, mouse only) ----------
+const heroCard = document.querySelector('.hero-card');
+
+if (heroCard && !prefersReducedMotion && window.matchMedia('(hover: hover)').matches) {
+  heroCard.addEventListener('mousemove', (e) => {
+    const r = heroCard.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    heroCard.style.transform = `perspective(1000px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
+  });
+  heroCard.addEventListener('mouseleave', () => { heroCard.style.transform = ''; });
+}
