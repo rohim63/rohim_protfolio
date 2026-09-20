@@ -1,22 +1,22 @@
 /* ====================================
    PREMIUM PORTFOLIO
-   Theme: Dark Elegance with Electric Blue accents
+   Theme: Dark Elegance with Violet accents
    To change the accent color, edit the variables below
    (--primary, --primary-dark, --primary-light, --secondary and their -rgb versions).
 ==================================== */
 
 :root {
   /* Accent colors */
-  --primary: #3B82F6;
-  --primary-dark: #2563EB;
-  --primary-light: #93C5FD;
-  --secondary: #60A5FA;
+  --primary: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-light: #C4B5FD;
+  --secondary: #A78BFA;
   --accent: #00D4AA;
 
   /* Same colors as R, G, B (used for transparent tints) */
-  --primary-rgb: 59, 130, 246;
-  --secondary-rgb: 96, 165, 250;
-  --light-rgb: 147, 197, 253;
+  --primary-rgb: 139, 92, 246;
+  --secondary-rgb: 167, 139, 250;
+  --light-rgb: 196, 181, 253;
   --accent-rgb: 0, 212, 170;
 
   --gray-50: #0A0A0A;
@@ -547,44 +547,77 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ====================================
-   ANIMATED PROFILE CARD
+   ANIMATED PROFILE PICTURE
 ==================================== */
 
 @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 
-.hero-card {
-  border: 2px solid transparent;
-  background:
-    var(--gradient-card) padding-box,
-    conic-gradient(from var(--angle), transparent 0%, var(--primary) 20%, var(--secondary) 35%, transparent 55%, transparent 100%) border-box;
-  animation: cardIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both, float 6s ease-in-out 0.9s infinite, spinBorder 5s linear infinite;
-  transition: transform 0.2s ease-out;
-  transform-style: preserve-3d;
-  will-change: transform;
+.profile-frame {
+  position: relative;
+  width: min(260px, calc(100% - 56px));
+  aspect-ratio: 1;
+  margin: 12px auto 40px;
+  animation: framePop 1s cubic-bezier(0.34, 1.56, 0.64, 1) both, float 6s ease-in-out 1s infinite;
 }
 
-@keyframes cardIn { from { opacity: 0; translate: 0 40px; } to { opacity: 1; translate: 0 0; } }
-@keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
-@keyframes spinBorder { to { --angle: 360deg; } }
+/* Soft pulsing glow behind the photo */
+.profile-frame::before {
+  content: ''; position: absolute; inset: -18px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--primary-rgb), 0.45), transparent 70%);
+  filter: blur(14px);
+  animation: glowPulse 3s ease-in-out infinite;
+}
 
-/* Photo: slow zoom, glow and light sweep */
-.profile-image { animation: photoGlow 3s ease-in-out infinite; }
-.profile-image img { animation: kenBurns 14s ease-in-out infinite alternate; }
+/* Rotating gradient ring */
+.profile-ring {
+  position: absolute; inset: -10px; border-radius: 50%;
+  background: conic-gradient(from var(--angle), transparent 0%, var(--primary) 25%, var(--secondary) 45%, var(--accent) 60%, transparent 75%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  animation: spinRing 4s linear infinite;
+}
+
+/* Orbiting dots */
+.orbit { position: absolute; border-radius: 50%; animation: orbit 9s linear infinite; }
+.orbit::before { content: ''; position: absolute; top: -6px; left: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; }
+.orbit-1 { inset: -24px; }
+.orbit-1::before { background: var(--accent); box-shadow: 0 0 14px var(--accent); }
+.orbit-2 { inset: -38px; animation-duration: 14s; animation-direction: reverse; }
+.orbit-2::before { width: 8px; height: 8px; left: calc(50% - 4px); top: -4px; background: var(--secondary); box-shadow: 0 0 12px var(--secondary); }
+
+/* Circular photo */
+.profile-frame .profile-image {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(var(--primary-rgb), 0.5);
+  animation: photoGlow 3s ease-in-out infinite;
+}
+.profile-image img { transition: transform 0.6s ease; animation: kenBurns 14s ease-in-out infinite alternate; }
+.profile-frame:hover .profile-image img { transform: scale(1.1); }
+
+/* Light sweep across the photo */
 .profile-image::after {
   content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.2) 50%, transparent 65%);
   transform: translateX(-120%);
   animation: sweep 5s ease-in-out 1.5s infinite;
 }
-@keyframes kenBurns { from { transform: scale(1); } to { transform: scale(1.08); } }
-@keyframes photoGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.35); } 50% { box-shadow: 0 0 28px 4px rgba(var(--primary-rgb), 0.35); } }
-@keyframes sweep { 0% { transform: translateX(-120%); } 40%, 100% { transform: translateX(120%); } }
 
-/* Placeholder avatar pulses */
-.avatar { animation: avatarPulse 2.4s ease-in-out infinite; }
+.profile-placeholder { gap: 8px; padding: 12px; }
+.profile-placeholder p { font-size: 11px; }
+.avatar { width: 64px; height: 64px; font-size: 26px; animation: avatarPulse 2.4s ease-in-out infinite; }
+
+@keyframes framePop { from { opacity: 0; scale: 0.6; } to { opacity: 1; scale: 1; } }
+@keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+@keyframes spinRing { to { --angle: 360deg; } }
+@keyframes orbit { to { transform: rotate(360deg); } }
+@keyframes glowPulse { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes photoGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.35); } 50% { box-shadow: 0 0 24px 4px rgba(var(--primary-rgb), 0.4); } }
+@keyframes kenBurns { from { scale: 1; } to { scale: 1.08; } }
+@keyframes sweep { 0% { transform: translateX(-120%); } 40%, 100% { transform: translateX(120%); } }
 @keyframes avatarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-/* Staggered entrance for text and details */
+/* Staggered entrance for the text under the photo */
 .profile-info h2, .profile-info .role, .info-item, .cta-buttons, .trust-badges span { animation: riseIn 0.6s ease both; }
 .profile-info h2 { animation-delay: 0.5s; }
 .profile-info .role { animation-delay: 0.6s; }
@@ -598,6 +631,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 @keyframes riseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-card, .profile-image, .profile-image img, .avatar { animation: none !important; }
+  .profile-frame, .profile-frame::before, .profile-ring, .orbit, .profile-image, .profile-image img, .avatar { animation: none !important; }
   .profile-image::after { display: none; }
 }
