@@ -545,3 +545,59 @@ button { font-family: inherit; cursor: pointer; border: none; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ====================================
+   ANIMATED PROFILE CARD
+==================================== */
+
+@property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+.hero-card {
+  border: 2px solid transparent;
+  background:
+    var(--gradient-card) padding-box,
+    conic-gradient(from var(--angle), transparent 0%, var(--primary) 20%, var(--secondary) 35%, transparent 55%, transparent 100%) border-box;
+  animation: cardIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both, float 6s ease-in-out 0.9s infinite, spinBorder 5s linear infinite;
+  transition: transform 0.2s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+@keyframes cardIn { from { opacity: 0; translate: 0 40px; } to { opacity: 1; translate: 0 0; } }
+@keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+@keyframes spinBorder { to { --angle: 360deg; } }
+
+/* Photo: slow zoom, glow and light sweep */
+.profile-image { animation: photoGlow 3s ease-in-out infinite; }
+.profile-image img { animation: kenBurns 14s ease-in-out infinite alternate; }
+.profile-image::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: sweep 5s ease-in-out 1.5s infinite;
+}
+@keyframes kenBurns { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes photoGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.35); } 50% { box-shadow: 0 0 28px 4px rgba(var(--primary-rgb), 0.35); } }
+@keyframes sweep { 0% { transform: translateX(-120%); } 40%, 100% { transform: translateX(120%); } }
+
+/* Placeholder avatar pulses */
+.avatar { animation: avatarPulse 2.4s ease-in-out infinite; }
+@keyframes avatarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+/* Staggered entrance for text and details */
+.profile-info h2, .profile-info .role, .info-item, .cta-buttons, .trust-badges span { animation: riseIn 0.6s ease both; }
+.profile-info h2 { animation-delay: 0.5s; }
+.profile-info .role { animation-delay: 0.6s; }
+.info-item:nth-child(1) { animation-delay: 0.7s; }
+.info-item:nth-child(2) { animation-delay: 0.8s; }
+.info-item:nth-child(3) { animation-delay: 0.9s; }
+.cta-buttons { animation-delay: 1s; }
+.trust-badges span:nth-child(1) { animation-delay: 1.1s; }
+.trust-badges span:nth-child(2) { animation-delay: 1.2s; }
+.trust-badges span:nth-child(3) { animation-delay: 1.3s; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card, .profile-image, .profile-image img, .avatar { animation: none !important; }
+  .profile-image::after { display: none; }
+}
