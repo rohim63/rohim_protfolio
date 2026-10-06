@@ -359,9 +359,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .timeline-marker { position: absolute; left: -40px; top: 24px; width: 18px; height: 18px; border-radius: 50%; background: var(--gradient-primary); border: 3px solid var(--bg-alt); box-shadow: var(--shadow-glow); z-index: 1; }
 .timeline-content { border-radius: var(--radius-lg); padding: 24px; }
 .timeline-badge { display: inline-block; padding: 6px 12px; background: rgba(var(--accent-rgb), 0.14); color: var(--accent-text); border: 1px solid rgba(var(--accent-rgb), 0.3); border-radius: var(--radius-full); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-.timeline-content h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text); }
-.company { color: var(--primary-text); font-weight: 700; margin-bottom: 4px; }
-.period { color: var(--text-4); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.timeline-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.timeline-content h3 { font-size: 18px; font-weight: 800; color: var(--text); }
+.company { color: var(--text-3); font-weight: 600; font-style: italic; margin: 4px 0 16px; }
+.period { flex-shrink: 0; color: var(--primary-text); font-size: 13px; font-weight: 700; white-space: nowrap; }
 .timeline-content ul { list-style: none; display: grid; gap: 8px; }
 .timeline-content li { padding-left: 24px; position: relative; color: var(--text-3); line-height: 1.6; }
 .timeline-content li::before { content: '→'; position: absolute; left: 0; color: var(--primary-text); font-weight: 900; }
